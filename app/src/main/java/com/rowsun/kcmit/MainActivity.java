@@ -1,3 +1,5 @@
+
+
 package com.rowsun.kcmit;
 
 import android.content.DialogInterface;
@@ -23,6 +25,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,21 +54,29 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         String json = "{\"res\":\"success\",\"data\":{\"id\":\"1\",\"username\":\"kcmit\",\"c_fname\":\"roshan\",\"c_lname\":\"rijal\",\"n_home\":\"\",\"n_mobile\":\"9849316389\",\"n_office\":\"\",\"created\":\"2016-12-29 03:59:23 pm\"}}";
         try {
             JSONObject object = new JSONObject(json);
-//            String response = object.optString("res");
-//            JSONObject data = object.getJSONObject("data");
-//            String username = data.optString("username");
+
+                String response = object.optString("res");
+
+            JSONArray array  = object.getJSONArray("data");
+            for(int i = 0 ; i < array.length() ;i++){
+                JSONObject o = array.getJSONObject(i);
+                System.out.println("Username " + o.opt("username"));
+            }
+            JSONObject data = object.getJSONObject("data");
+            String username = data.optString("username");
 //            display.setText(response + " USER NAME = " +  username);
             SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
 //            p.edit().putString("name", username).commit();
             message.setText(p.getString("name", ""));
             p.edit().clear();
-//            View  v = LayoutInflater.from(this).inflate(R.layout.row_student, null);
-//            new AlertDialog.Builder(this).setView(v).setTitle("Response").setMessage(response).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    Toast.makeText(MainActivity.this, "OK clicked", Toast.LENGTH_LONG).show();
-//                }
-//            }).setNegativeButton("Cancel", null).show();
+            View  v = LayoutInflater.from(this).inflate(R.layout.row_student, null);
+
+            new AlertDialog.Builder(this).setView(v).setTitle("Response").setMessage(response).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }).setNegativeButton("Cancel", null).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -87,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     protected void onPause() {
         super.onPause();
 
+
     }
 
     @Override
@@ -94,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         super.onResume();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
