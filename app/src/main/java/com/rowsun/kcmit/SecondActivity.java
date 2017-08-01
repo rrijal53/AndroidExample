@@ -17,21 +17,20 @@ public class SecondActivity extends AppCompatActivity {
 
 
     RecyclerView rv_test;
-    List<Student> studentList;
-    AdapterContact mAdapter;
+    List<Doctor> doctorList;
+    AdapterDoctor mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        studentList = new ArrayList<>();
-        Student s = new Student("ROshan", "Abc", "123");
-        studentList.add(s);
-        studentList.add(new Student("abc", "cde", "234"));
-        studentList.add(new Student("abcd", "rrcde", "11234"));
+        doctorList = new ArrayList<>();
 
-        mAdapter = new AdapterContact(this, studentList);
+        doctorList.add(new Doctor("1", "roshan", "dhulikhel", "fjdsfs", "m" ));
+        doctorList.add(new Doctor("1", "roshan rijal", "dhulikhel", "fjdsfs", "m" ));
+
+        mAdapter = new AdapterDoctor(this, doctorList);
 
         rv_test = (RecyclerView) findViewById(R.id.rv);
         rv_test.setLayoutManager(new LinearLayoutManager(this));

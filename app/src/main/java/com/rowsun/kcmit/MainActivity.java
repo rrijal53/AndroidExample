@@ -2,10 +2,12 @@
 
 package com.rowsun.kcmit;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -29,68 +31,73 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+import java.util.HashMap;
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity {
 
-    EditText message;
-    TextView display;
-    Button button;
-    RadioButton radio_male, radio_female;
+    EditText fullname, uname, password, submit;
+    ProgressDialog pd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        pd = new ProgressDialog(this);
+        pd.setTitle("Title");
+        pd.setMessage("Please wait");
+        final ServerRequest sh = new ServerRequest(this);
 
-        message = (EditText) findViewById(R.id.et_message);
-        button = (Button) findViewById(R.id.btnn);
-        display = (TextView) findViewById(R.id.display);
-        radio_male = (RadioButton) findViewById(R.id.radio_male);
-        radio_female = (RadioButton) findViewById(R.id.radio_female);
-
-        radio_female.setOnCheckedChangeListener(this);
-
-        String json = "{\"res\":\"success\",\"data\":{\"id\":\"1\",\"username\":\"kcmit\",\"c_fname\":\"roshan\",\"c_lname\":\"rijal\",\"n_home\":\"\",\"n_mobile\":\"9849316389\",\"n_office\":\"\",\"created\":\"2016-12-29 03:59:23 pm\"}}";
-        try {
-            JSONObject object = new JSONObject(json);
-
-                String response = object.optString("res");
-
-            JSONArray array  = object.getJSONArray("data");
-            for(int i = 0 ; i < array.length() ;i++){
-                JSONObject o = array.getJSONObject(i);
-                System.out.println("Username " + o.opt("username"));
-            }
-            JSONObject data = object.getJSONObject("data");
-            String username = data.optString("username");
-//            display.setText(response + " USER NAME = " +  username);
-            SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
-//            p.edit().putString("name", username).commit();
-            message.setText(p.getString("name", ""));
-            p.edit().clear();
-            View  v = LayoutInflater.from(this).inflate(R.layout.row_student, null);
-
-            new AlertDialog.Builder(this).setView(v).setTitle("Response").setMessage(response).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            }).setNegativeButton("Cancel", null).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        button.setOnClickListener(new View.OnClickListener() {
+        fullname = (EditText) findViewById(R.id.fullname);
+        uname = (EditText) findViewById(R.id.uname);
+        password = (EditText) findViewById(R.id.password);
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("MainActivity", "Botton Clicked");
-                Toast.makeText(MainActivity.this, "Botton Clicked", Toast.LENGTH_LONG ).show();
-                Intent i = new Intent(MainActivity.this, SecondActivity.class);
-                    startActivity(i);
+                final String fname = fullname.getText().toString();
+                final String name = uname.getText().toString();
+                final String pwd = password.getText().toString();
+                if (!sh.isNetworkConnected(MainActivity.this)) {
+                    Toast.makeText(MainActivity.this, "No internet", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+                pd.show();
+                new AsyncTask<Void, Void, String>() {
+
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        HashMap<String, String> map = new HashMap<String, String>();
+                        map.put("action", "register");
+                        map.put("uname", name);
+                        map.put("fullname", fname);
+                        map.put("password", pwd);
+
+
+                        return  sh.httpPostData("http://192.168.1.11/contact/abc.php", map);
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        super.onPostExecute(s);
+                        try {
+                            JSONObject object = new JSONObject(s);
+                          String re =  object.optString("res");
+                            if(re.equals("success")){
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }.execute();
             }
         });
-
     }
 
 
@@ -98,40 +105,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     protected void onPause() {
         super.onPause();
 
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        display.setText("" + isChecked);
-        display.setTextColor(isChecked ?    Color.parseColor("#ffffff") : Color.parseColor("#000000"));
 
     }
 }
