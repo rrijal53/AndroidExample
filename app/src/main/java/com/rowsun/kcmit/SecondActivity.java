@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SecondActivity extends AppCompatActivity {
@@ -34,7 +35,7 @@ public class SecondActivity extends AppCompatActivity {
 
         rv_test = (RecyclerView) findViewById(R.id.rv);
         rv_test.setLayoutManager(new LinearLayoutManager(this));
-        rv_test.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+//        rv_test.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         rv_test.setAdapter(mAdapter);
 
 

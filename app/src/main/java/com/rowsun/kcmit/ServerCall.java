@@ -12,40 +12,41 @@ import okhttp3.Response;
  * Created by rowsun on 7/18/17.
  */
 
-public class ServerCall  extends AsyncTask<Void, Void, String> {
+public class ServerCall extends AsyncTask<Void, Void, String> {
 
 
-    interface OnDataReceived{
+    interface OnDataReceived {
         void success(String response);
+
         void error(String message);
     }
 
     OnDataReceived listener;
-    String a ;
+    String a;
+
     public ServerCall(OnDataReceived listener) {
         this.listener = listener;
-
-this.a = a;
+        this.a = a;
     }
 
     @Override
     protected String doInBackground(Void... params) {
-        String s =  getData();
+        String s = getData();
         return s;
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if(s.isEmpty()){
+        if (s.isEmpty()) {
             listener.error("Connection failed");
-        }else{
+        } else {
             listener.success(s);
         }
 
     }
 
-    public String getData(){
+    public String getData() {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -60,6 +61,6 @@ this.a = a;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  "";
+        return "";
     }
 }
